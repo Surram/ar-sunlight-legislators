@@ -1,7 +1,14 @@
 require_relative '../../db/config'
+require_relative 'tweet.rb'
+# require 'rubygems'
+require 'twitter'
 
 class Congressperson < ActiveRecord::Base
   validates :phone, :numericality => { :only_integer => true }
+
+  # def set_inheritance_column(value)
+  #   set_inheritance_column { :title }
+  # end
 
   def active?
     return true if self.in_office.to_s == "1"
@@ -15,51 +22,30 @@ class Congressperson < ActiveRecord::Base
     write_attribute(:phone, phone_num.to_i)
   end
 
-  # def birthdate=(value)
-    # change birthdate format unless it's already in the right format
-  # end
+  def get_last_ten_tweets
+    Twitter.configure do |config|
+      config.consumer_key = 'NzH4bI1Q7kNpeSOBk10Hw'
+      config.consumer_secret = 'zZimyC0wU0DInWoVftswG6uVVcjVIAEO6mZJY3YMw'
+    end
 
-  # def self.get_representatives_by_state(target_state)
-  #   self.get_congresspeople_by_state_and_legislature(target_state, "house of representatives")
-  # end
+    last_ten_tweets = Twitter.user_timeline(twitter_id, :count => 10)
 
-  # def self.get_senators_by_state(target_state)
-  #   self.get_congresspeople_by_state_and_legislature(target_state, "senate")
-  # end
+    last_ten_tweets.each do |tweet_data|
+      tweet =Tweet.new({ :tweet_id => tweet_data.id, :text => tweet_data.text, :congressperson_id => twitter_id })
+      tweet.save
+    end
 
-  # def self.get_representatives_by_party(target_party)
-  #   self.get_congresspeople_by_party_and_legislature(target_party, "house of representatives")
-  # end
+  end
 
-  # def self.get_senators_by_party(target_party)
-  #   self.get_congresspeople_by_party_and_legislature(target_party, "senate")
-  # end
-
-  # private
-  # def self.get_congresspeople_by_state_and_legislature(target_state, target_house_of_congress)
-
-  #   if target_house_of_congress == "senate"
-
-  #   elsif target_house_of_congress == house of representatives
-
+  # def title=(value)
+  #   if value == "Rep"
+  #     t = "Representative"
+  #   elsif value == "Sen"
+  #     t = "Senator"
   #   else
-  #     raise ArgumentError "Invalid house of congress specified"
+  #     t = value
   #   end
-
+  #   write_attribute(:title, t)
   # end
-
-  # def self.get_congresspeople_by_party_and_legislature(target_party, target_house_of_congress)
-
-  #   if target_house_of_congress == "senate"
-
-  #   elsif target_house_of_congress == house of representatives
-
-  #   else
-  #     raise ArgumentError "Invalid house of congress specified"
-  #   end
-
-  # end
-
-
 
 end
