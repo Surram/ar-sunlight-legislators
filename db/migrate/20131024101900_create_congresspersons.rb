@@ -5,11 +5,11 @@ class CreateCongresspersons < ActiveRecord::Migration
   def change
     # HINT: checkout ActiveRecord::Migration.create_table
 
-    create_table :congresspersons do |column|
+    create_table :congresspeople do |column|
       column.string :title
-      column.string :first_name
-      column.string :middle_name
-      column.string :last_name
+      column.string :firstname
+      column.string :middlename
+      column.string :lastname
       column.string :name_suffix
       column.string :nickname
       column.string :party

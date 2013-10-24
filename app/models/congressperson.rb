@@ -1,12 +1,23 @@
 require_relative '../../db/config'
 
 class Congressperson < ActiveRecord::Base
+  validates :phone, :numericality => { :only_integer => true }
 
   def active?
     return true if self.in_office.to_s == "1"
 
     false
   end
+
+
+  def phone=(value)
+    phone_num = value.to_s.gsub(/[^0-9+]/, "")
+    write_attribute(:phone, phone_num.to_i)
+  end
+
+  # def birthdate=(value)
+    # change birthdate format unless it's already in the right format
+  # end
 
   # def self.get_representatives_by_state(target_state)
   #   self.get_congresspeople_by_state_and_legislature(target_state, "house of representatives")
